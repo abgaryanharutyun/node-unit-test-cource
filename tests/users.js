@@ -52,6 +52,21 @@ describe('User test', ()=> {
 
                 done();
             })
+        });
+
+        it('should cetch errror if there is one ', (done) => {
+            sendBox.restore();
+            let stub = sendBox.stub(mongoose.Model, 'findById').yields(new Error('fake'));
+
+            users.get(123, (error, response) => {
+                expect(response).to.not.exist;
+                expect(error).to.exist;
+                expect(error).to.be.instanceOf(Error);
+                expect(stub).to.have.been.calledWith(123);
+                expect(error.message).to.equal('fake');
+
+                done();
+            })
         })
     })
 })
