@@ -2,21 +2,21 @@ const assert = require('assert');
 
 describe('first file test', () => {
     context('first function test', () => {
-        before(()=> {
-            console.log('======before');
-        });
+        // before(()=> {
+        //     console.log('======before');
+        // });
 
-        after(()=> {
-            console.log('======after');
-        });
+        // after(()=> {
+        //     console.log('======after');
+        // });
 
-        beforeEach(()=> {
-            console.log('====beforeEach')
-        });
+        // beforeEach(()=> {
+        //     console.log('====beforeEach')
+        // });
 
-        afterEach(()=> {
-            console.log('==== afterEach')
-        })
+        // afterEach(()=> {
+        //     console.log('==== afterEach')
+        // })
 
 
         it('shold do something', () => {
@@ -24,7 +24,7 @@ describe('first file test', () => {
         });
 
         it('shold do something else', ()=>{
-
+            console.log("ENV: ", process.env.NODE_ENV);
             assert.deepEqual({name: 'joe'}, {name: 'joe'});
         })
     })
