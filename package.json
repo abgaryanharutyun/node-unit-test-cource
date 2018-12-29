@@ -15,5 +15,8 @@
     "rewire": "^4.0.1",
     "sinon": "^7.2.2",
     "sinon-chai": "^3.3.0"
+  },
+  "dependencies": {
+    "mongoose": "^5.4.1"
   }
 }
