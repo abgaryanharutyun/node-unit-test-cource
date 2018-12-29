@@ -22,15 +22,15 @@ describe('test demo', ()=> {
     });
 
     context('shold test promise function', ()=>{
-        // it('testing promise function', (done)=>{
-        //     demo.addPromise(1, 2).then((result)=> {
-        //         expect(result).to.equal(3);
-        //         done();
-        //     }).catch((err)=> {
-        //         console.log('error promise ----')
-        //         done(err);
-        //     })
-        // });
+        it('testing promise function', (done)=>{
+            demo.addPromise(1, 2).then((result)=> {
+                expect(result).to.equal(3);
+                done();
+            }).catch((err)=> {
+                console.log('error promise ----')
+                done(err);
+            })
+        });
 
         it('testing return promise', ()=>{
             return demo.addPromise(1, 2).then((result)=>{
