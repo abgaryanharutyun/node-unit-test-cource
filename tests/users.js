@@ -11,24 +11,31 @@ chai.use(sinonChai);
 
 var mongoose = require('mongoose');
 
-var users = require('../src/users');
+var users = rewire('../src/users');
 
 var User = require('../src/models/users');
+var mailer = require('../src/mailer');
 var sendBox = sinon.createSandbox();
 describe('User test', ()=> {
     let findStub;
+    let deleteStub;
     let samplArgs;
     let sampleUser; 
+    let mailerStub;
     beforeEach(()=>{
         sampleUser = {
             id: 123,
-            name: 'foo'
+            name: 'foo',
+            email: 'ex@gmail.com'
         }
         findStub = sendBox.stub(mongoose.Model, 'findById').resolves(sampleUser);
+        deleteStub = sendBox.stub(mongoose.Model, 'remove').resolves('fake_remove_result');
+        mailerStub = sendBox.stub(mailer, 'sendWelcomeEmail').resolves('fake_email');
     });
 
     afterEach(()=>{
         sendBox.restore()
+        users = rewire('../src/users');
     });
 
     context('get', ()=> {
@@ -68,5 +75,64 @@ describe('User test', ()=> {
                 done();
             })
         })
+    })
+
+    context('delete user', ()=>{
+        it('should check for an id usin retur', () => {
+            return users.delete().then((result)=> {
+                throw new Error('unexpected success');
+            }).catch((ex) => {
+                expect(ex).to.be.instanceOf(Error);
+                expect(ex.message).to.equal('invalid id')
+            })
+        });
+
+        it('should check for error eventually', () => {
+            return expect(users.delete()).to.eventually.be.rejectedWith('invalid id')
+        });
+
+        it('shold call User.delete', async () => {
+            let result = await users.delete(123);
+            expect(result).to.equal('fake_remove_result');
+            expect(deleteStub).to.have.been.calledWith({_id: 123});
+        })
+    });
+
+
+    context('create user', ()=>{
+        let FakeUserClass, saveStub, results;
+
+        beforeEach(async ()=>{
+            saveStub = sendBox.stub().resolves(sampleUser);
+            FakeUserClass = sendBox.stub().returns({save: saveStub});
+
+            users.__set__('User', FakeUserClass);
+
+            results = await users.create(sampleUser);
+        })
+        it('should reject invalid args', async ()=>{
+            await expect(users.create()).to.eventually.be.rejectedWith('Invalid arguments');
+            await expect(users.create({name: 'foo'})).to.eventually.be.rejectedWith('Invalid arguments');
+            await expect(users.create({email: 'ex@gmail.com'})).to.eventually.be.rejectedWith('Invalid arguments');
+        })
+
+        it('shold call User with new', () => {
+            expect(FakeUserClass).to.have.been.calledWithNew;
+            expect(FakeUserClass).to.have.been.calledWith(sampleUser);
+        });
+
+        it('Sholud save user', ()=>{
+            expect(saveStub).to.have.been.called;
+        });
+
+        it('Should call mailer', () => {
+            expect(mailerStub).to.have.been.calledWith(sampleUser.email, sampleUser.name);
+        })
+
+        it('Should reject with error', async ()=>{
+            saveStub.rejects(new Error('fake'));
+            await expect(users.create(sampleUser)).to.eventually.be.rejectedWith('fake')
+        })
+
     })
 })
