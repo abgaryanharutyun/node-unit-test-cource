@@ -42,3 +42,18 @@ exports.create = function (data) {
         });
     })
 }
+
+exports.update = async function(id, data) {
+    try{
+        const user = await User.findById(id);
+
+        for (var props in data){
+            user[props] = data[props];
+        }
+
+        var result = await user.save();
+        return result;
+    }catch(err){
+        return Promise.reject(err);
+    }
+}

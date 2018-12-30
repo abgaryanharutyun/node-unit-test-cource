@@ -26,7 +26,8 @@ describe('User test', ()=> {
         sampleUser = {
             id: 123,
             name: 'foo',
-            email: 'ex@gmail.com'
+            email: 'ex@gmail.com',
+            save: sendBox.stub().resolves()
         }
         findStub = sendBox.stub(mongoose.Model, 'findById').resolves(sampleUser);
         deleteStub = sendBox.stub(mongoose.Model, 'remove').resolves('fake_remove_result');
@@ -109,7 +110,8 @@ describe('User test', ()=> {
             users.__set__('User', FakeUserClass);
 
             results = await users.create(sampleUser);
-        })
+        });
+
         it('should reject invalid args', async ()=>{
             await expect(users.create()).to.eventually.be.rejectedWith('Invalid arguments');
             await expect(users.create({name: 'foo'})).to.eventually.be.rejectedWith('Invalid arguments');
@@ -134,5 +136,25 @@ describe('User test', ()=> {
             await expect(users.create(sampleUser)).to.eventually.be.rejectedWith('fake')
         })
 
-    })
+    });
+
+    context('update user', ()=>{
+        it('shuld find user by id', async ()=>{
+            await users.update(123, {age: 12});
+
+            expect(findStub).to.have.been.calledWith(123);
+        });
+
+        it('should call user.save', async ()=> {
+            await users.update(123, {age: 12});
+            
+            expect(sampleUser.save).to.have.been.calledOnce;
+        });
+
+        it('should reject when have error', async ()=>{
+            findStub.throws(new Error('fake'));
+
+            await expect(users.update(123, {age: 12})).to.be.eventually.be.rejectedWith('fake');
+        });
+    });
 })
