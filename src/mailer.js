@@ -7,6 +7,7 @@ module.exports = {
         var body = `Dear ${name}, welcome to our family!`;
         return sendEmail(email, body);
     },
+    
     sendPasswordResetEmail: function(email) {
         if (!email) {
             return Promise.reject(new Error('Invalid input'));
