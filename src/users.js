@@ -57,3 +57,12 @@ exports.update = async function(id, data) {
         return Promise.reject(err);
     }
 }
+
+exports.resetPassword = function(email) {
+    if (!email) {
+        return Promise.reject(new Error('Invalid email'));
+    }
+
+
+    return mailer.sendPasswordResetEmail(email);
+}

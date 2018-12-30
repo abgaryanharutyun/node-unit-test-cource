@@ -147,7 +147,7 @@ describe('User test', ()=> {
 
         it('should call user.save', async ()=> {
             await users.update(123, {age: 12});
-            
+
             expect(sampleUser.save).to.have.been.calledOnce;
         });
 
@@ -157,4 +157,22 @@ describe('User test', ()=> {
             await expect(users.update(123, {age: 12})).to.be.eventually.be.rejectedWith('fake');
         });
     });
+
+    context('reset password', () => {
+        let resetStub;
+
+        beforeEach(()=>{
+            resetStub = sendBox.stub(mailer, 'sendPasswordResetEmail').resolves('fake_reset');
+
+        });
+
+        it('shuld check for email', async ()=> {
+            await expect(users.resetPassword()).to.eventually.be.rejectedWith('Invalid email')
+        });
+
+        it('shuld call send resetPassword()', async()=>{
+            await users.resetPassword('ex@gmail.com');
+            expect(resetStub).to.have.been.calledWith('ex@gmail.com');
+        })
+    })
 })
