@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "cross-env NODE_ENV=development mocha './tests'"
+    "test": "cross-env NODE_ENV=development mocha './tests'",
+    "coverage": "cross-env NODE_ENV=development nyc --report=text npm test"
   },
   "author": "",
   "license": "ISC",
@@ -12,11 +13,15 @@
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "cross-env": "^5.2.0",
+    "nyc": "^13.1.0",
     "rewire": "^4.0.1",
     "sinon": "^7.2.2",
-    "sinon-chai": "^3.3.0"
+    "sinon-chai": "^3.3.0",
+    "supertest": "^3.3.0"
   },
   "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
     "mongoose": "^5.4.1"
   }
 }

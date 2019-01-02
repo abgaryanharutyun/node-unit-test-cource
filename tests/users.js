@@ -6,9 +6,9 @@ chai.use(chaiAsPromised);
 
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
-const rewire = require('rewire');
-chai.use(sinonChai);
 
+chai.use(sinonChai);
+const rewire = require('rewire');
 var mongoose = require('mongoose');
 
 var users = rewire('../src/users');
@@ -172,7 +172,7 @@ describe('User test', ()=> {
 
         it('shuld call send resetPassword()', async()=>{
             await users.resetPassword('ex@gmail.com');
-            expect(resetStub).to.have.been.calledWith('ex@gmail.com');
+            expect(resetStub).to.have.been.calledWith('ex@gmail.com')
         })
     })
 })
